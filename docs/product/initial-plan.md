@@ -1,186 +1,166 @@
-# 初版开发计划
+# Initial Plan / 初版开发计划
 
-## 1. 项目目标
+## 1. Project Target / 项目目标
 
-先做出一个可维护、可逐步上线的第一版平台，覆盖以下主链路：
+English:
+Build a maintainable first version of the platform that covers customer-facing API delivery, internal scheduling, SGLang deployment orchestration, and API metering and billing.
 
-- 面向客户的 API 交付页面
-- 面向内部的资源调度与部署页面
-- 下游机器上的 SGLang 推理服务编排
-- API 使用量统计与计费
+中文注解：
+第一版的目标不是“大而全”，而是做出一个结构正确、可持续扩展、能跑业务闭环的平台。
 
-这个阶段不是追求“大而全”，而是先把业务闭环跑通。
+## 2. Phase Plan / 阶段计划
 
-## 2. 阶段计划
+### Phase 0: Project Foundation / 项目基础
 
-### Phase 0：项目基础
+English:
+Establish repository structure, confirm the technical stack, and prepare the key design documents.
 
-目标：
+中文注解：
+先把目录、技术路线和文档定下来，解决“以后怎么不乱”的问题。
 
-- 建立仓库结构
-- 固定技术方案
-- 补齐核心设计文档
+Deliverables / 交付物：
 
-交付物：
+- monorepo layout
+- architecture overview
+- MVP roadmap
+- initial execution plan
 
-- monorepo 目录布局
-- 架构总览文档
-- MVP 路线图
-- 初版执行计划
+### Phase 1: Engineering Scaffold / 工程脚手架
 
-说明：
+English:
+Make the repository ready for local development and future expansion.
 
-- 这一阶段主要解决“以后怎么不乱”的问题
-- 先把边界定清楚，再开始写代码
+中文注解：
+这个阶段重点是让项目“能启动、能安装、能扩展”，不是追求业务完整。
 
-### Phase 1：工程脚手架
+Deliverables / 交付物：
 
-目标：
+- workspace setup
+- TypeScript base config
+- lint and format setup
+- app skeletons for portal, admin, and api-server
+- environment variable conventions
 
-- 让仓库具备本地开发和持续扩展能力
+### Phase 2: Account and Access / 账号与访问
 
-交付物：
+English:
+Enable customer and operator authentication flows.
 
-- workspace 管理
-- TypeScript 基础配置
-- lint / format 配置
-- portal、admin、api-server 三个应用骨架
-- 环境变量规范
+中文注解：
+这一阶段解决身份、租户、权限和 API Key 这些最基础的入口能力。
 
-说明：
+Deliverables / 交付物：
 
-- 这一阶段不要求业务完整
-- 重点是把工程运行底座搭起来
+- users and tenants schema
+- auth module
+- role checks
+- API key management
 
-### Phase 2：账号与访问能力
+### Phase 3: Model and Deployment / 模型与部署
 
-目标：
+English:
+Enable operators to manage models, machines, and deployment tasks.
 
-- 先打通客户和管理员的登录/鉴权链路
+中文注解：
+这是平台从“管理系统”走向“实际控制推理服务”的关键阶段。
 
-交付物：
+Deliverables / 交付物：
 
-- users / tenants 基础 schema
-- auth 模块
-- 角色权限检查
-- API Key 管理
-
-说明：
-
-- 后面几乎所有能力都依赖身份、租户和权限
-- API Key 也是运行时网关的前置条件
-
-### Phase 3：模型与部署管理
-
-目标：
-
-- 让管理员能管理模型、机器并发起部署
-
-交付物：
-
-- 模型注册表
-- 节点注册
-- 部署任务 API
+- model registry
+- node registry
+- deployment task API
 - scheduler worker
-- SGLang 部署集成
+- SGLang deployment integration
 
-说明：
+### Phase 4: Runtime Request Path / 运行时请求链路
 
-- 这里是你的平台核心竞争力之一
-- 不只是“创建任务”，还要考虑重试、幂等、资源释放
+English:
+Provide a stable inference access path for customers.
 
-### Phase 4：运行时请求链路
+中文注解：
+这一步打通后，客户才能真正通过你的平台调用模型。
 
-目标：
-
-- 让客户可以真正调用到一个可用的推理服务
-
-交付物：
+Deliverables / 交付物：
 
 - runtime gateway
-- 运行时鉴权与限流
-- 模型路由
-- 请求日志
+- runtime auth and rate limit
+- model routing
+- request logs
 
-说明：
+### Phase 5: Metering and Billing / 计量与计费
 
-- 到这一阶段，平台开始具备真实对外能力
-- 调用链路能跑通比 UI 完善更重要
+English:
+Close the business loop with usage ingestion, cost calculation, and ledger generation.
 
-### Phase 5：计量与计费
+中文注解：
+这一步让平台从“提供能力”变成“可以商业化运营”。
 
-目标：
+Deliverables / 交付物：
 
-- 完成业务闭环，做到“调用可计量、费用可结算”
+- usage event ingestion
+- cost calculation
+- ledger entries
+- customer billing page
 
-交付物：
+### Phase 6: Hardening / 稳定性加固
 
-- usage event 入库
-- 成本计算
-- ledger 账本记录
-- 客户账单页面
+English:
+Improve reliability, visibility, and operational safety.
 
-说明：
+中文注解：
+这一阶段是从“能跑”走向“能稳定跑”。
 
-- 原始 usage 数据必须先落库
-- 账单计算应基于 usage 派生，而不是反过来
+Deliverables / 交付物：
 
-### Phase 6：稳定性加固
+- health checks
+- deployment retries
+- alerting
+- better audit logs
+- basic tests for scheduling and billing
 
-目标：
+## 3. Immediate Task List / 当前最优先任务
 
-- 提高可运维性和可靠性
+English:
+The next concrete tasks are workspace tooling, app scaffolding, database schema, and the auth-tenant-api-key modules.
 
-交付物：
+中文注解：
+下一步最值得做的是把工程底盘、数据库主干和入口模块先建立起来。
 
-- 健康检查
-- 部署重试策略
-- 告警
-- 审计日志加强
-- 调度与计费模块基础测试
+具体任务 / Concrete tasks：
 
-说明：
+1. initialize workspace tooling
+2. scaffold `apps/web-portal`
+3. scaffold `apps/web-admin`
+4. scaffold `apps/api-server`
+5. add Prisma schema and first migrations
+6. add auth, tenant, and API key modules
 
-- 这一阶段是从“能跑”走向“能稳定跑”
+## 4. Design Rules / 设计规则
 
-## 3. 当前最优先任务
+English:
+Keep domain modules separated, split runtime APIs from console APIs, design deployment and billing flows to be idempotent, and write raw usage events before deriving billing.
 
-下面这些是下一步最值得做的具体事项：
+中文注解：
+这些规则的目的很直接：减少后面重构和线上事故的概率。
 
-1. 初始化 workspace 工具链
-2. 搭建 `apps/web-portal`
-3. 搭建 `apps/web-admin`
-4. 搭建 `apps/api-server`
-5. 增加 Prisma schema 和首批 migration
-6. 增加 auth、tenant、API key 模块
+## 5. Initial Milestone Success Criteria / 初始里程碑完成标准
 
-## 4. 设计规则
+English:
+The initial milestone is complete when the repository runs locally, the backend connects to the database, both frontends render basic shells, and auth with API keys works end to end.
 
-- 即使先放在一个后端服务里，也要保持领域模块分离
-- 运行时 API 和控制台 API 要分开设计
-- 部署任务和计费流程优先按幂等方式实现
-- 先记录原始 usage event，再做账单聚合
-- 不要过早拆成微服务
+中文注解：
+也就是说，第一阶段要做到“工程能跑、页面能起、身份能通”，而不是功能全做完。
 
-这些规则的目的只有一个：避免后面返工。
+## 6. Extra Notes / 额外提醒
 
-## 5. 初始里程碑的完成标准
+English:
+This platform is closer to a compact AI resource and billing platform than to a simple website.
 
-满足以下条件时，可以认为第一个开发里程碑完成：
+中文注解：
+最容易低估的是调度复杂度和计费一致性，最容易写乱的是把页面逻辑、业务逻辑和数据库逻辑混在一起。
 
-1. 仓库可以本地安装并运行
-2. 后端可以连接数据库
-3. portal 和 admin 可以渲染基础页面壳子
-4. auth 和 API key 模块端到端打通
+English:
+At this stage, clear directories, layered modules, and a closed core workflow matter more than visual polish.
 
-## 6. 额外提醒
-
-- 你的平台本质上不是简单网站，而是“小型 AI 资源与计费平台”
-- 最容易低估的是调度复杂度和计费一致性
-- 最容易写乱的地方是把页面逻辑、领域逻辑、数据库逻辑混在一起
-
-因此，当前阶段最重要的不是页面多漂亮，而是：
-
-- 目录要清楚
-- 模块要分层
-- 核心链路要能闭环
+中文注解：
+现阶段最重要的不是页面多漂亮，而是目录清楚、模块分层、链路闭环。

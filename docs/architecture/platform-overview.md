@@ -1,722 +1,285 @@
-# OneManTec Platform Overview
+# Platform Overview / 架构总览
 
-## 1. Product Goal
+## 1. Product Goal / 产品目标
 
-Build a compact but production-oriented platform for:
+English:
+Build a compact but production-oriented platform for customer-facing API delivery, internal scheduling, downstream SGLang deployment, and usage billing.
 
-- customer-facing token/API delivery
-- internal resource scheduling and deployment management
-- downstream machine orchestration for SGLang inference services
-- usage metering and billing
+中文注解：
+目标不是只做几个页面，而是做一个可上线、可计费、可调度的完整平台，覆盖客户调用、机器部署和费用结算三条主线。
 
-The platform should stay maintainable for a solo founder, so the design must favor:
+English:
+The platform should stay maintainable for a solo founder, so the design must favor clear boundaries, low coupling, incremental delivery, and operational visibility.
 
-- clear domain boundaries
-- low coupling between modules
-- incremental delivery
-- operational visibility from day one
+中文注解：
+因为你是一人公司，架构必须优先考虑“清楚、可拆、能逐步上线、出问题能定位”，而不是一开始追求复杂分布式设计。
 
-## 2. Recommended Product Split
+## 2. Product Split / 产品拆分
 
+English:
 The system should be treated as one platform with multiple surfaces, not just two web pages.
 
-### 2.1 Customer Portal
-
-Used by external customers.
+中文注解：
+这个系统本质上是“一个平台，多个界面和多个后台服务”，不能只按“前台页面 + 后台页面”来理解。
 
-- sign in / sign up
-- API key management
-- package or balance overview
-- usage dashboards
-- billing history
-- model catalog
-- API documentation
-
-### 2.2 Admin Console
-
-Used by the operator.
+### 2.1 Customer Portal / 用户侧门户
 
-- user management
-- price and package management
-- model management
-- machine pool management
-- deployment task management
-- billing and reconciliation
-- alerts and audit logs
-
-### 2.3 Runtime Platform Services
-
-Backend services required behind the UI.
-
-- auth and tenant service
-- API gateway
-- deployment orchestrator
-- resource scheduler
-- metering and billing service
-- notification and observability support
-
-## 3. Domain Modules
+English:
+Used by external customers for sign in, API key management, model browsing, usage viewing, billing review, and API documentation.
 
-These are the core modules that should exist even if some are implemented inside the same codebase in early stages.
+中文注解：
+这是给客户用的控制台，至少要覆盖登录、API Key、模型列表、用量、账单和文档。
 
-### 3.1 Identity and Access
+### 2.2 Admin Console / 管理后台
 
-- user account
-- tenant / workspace
-- roles and permissions
-- API keys
-- login sessions
-- audit logs
+English:
+Used by the operator for user management, price management, model management, machine pool management, deployment tasks, billing review, and audit.
 
-### 3.2 Customer and Product
+中文注解：
+这是你自己运营平台的后台，核心是管理用户、机器、模型、部署任务和价格配置。
 
-- customer profile
-- package plans
-- balance account
-- quota policy
-- model entitlements
+### 2.3 Runtime Services / 运行时服务
 
-### 3.3 Model and Deployment
+English:
+Backend services are required for auth, gateway, deployment orchestration, resource scheduling, metering, billing, and observability.
 
-- model registry
-- model version
-- runtime template
-- deployment spec
-- deployment instance
-- health status
+中文注解：
+真正复杂的部分不在页面，而在后面的运行时服务，包括网关、调度、部署、计费和观测。
 
-### 3.4 Resource Scheduling
+## 3. Domain Modules / 领域模块
 
-- machine registration
-- node capability reporting
-- GPU allocation
-- scheduling queue
-- resource locking
-- retry and compensation
+### 3.1 Identity and Access / 身份与权限
 
-### 3.5 API Gateway and Traffic
+English:
+This domain covers users, tenants, roles, API keys, sessions, and audit logs.
 
-- request authentication
-- rate limiting
-- routing
-- fallback policy
-- request tracing
-- request logs
+中文注解：
+这是所有业务的入口层，后面无论是控制台访问还是运行时请求，都依赖这一层。
 
-### 3.6 Metering and Billing
+### 3.2 Customer and Product / 客户与商业域
 
-- usage events
-- token counting
-- per-model pricing
-- real-time cost calculation
-- monthly statements
-- reconciliation
+English:
+This domain covers customer profile, plans, balance, quota policy, and model entitlement.
 
-### 3.7 Operations and Observability
+中文注解：
+这里定义客户买了什么、有什么额度、能用哪些模型，是商业化的核心。
 
-- task logs
-- deployment logs
-- metrics
-- alerts
-- incident annotations
+### 3.3 Model and Deployment / 模型与部署域
 
-## 4. Critical Workflows
+English:
+This domain covers model registry, model version, runtime template, deployment spec, and deployment instance.
 
-### 4.1 Customer API Call Flow
+中文注解：
+模型不是一个简单名字，还要区分版本、镜像、启动参数、部署模板和实例状态。
 
-1. Customer calls the platform API with an API key.
-2. Gateway validates key, tenant, quota, balance, and rate limits.
-3. Gateway resolves the target model and active deployment.
-4. Request is forwarded to the selected SGLang instance.
-5. Response metadata and usage are recorded.
-6. Metering creates usage events and billing records.
-7. Customer portal displays updated usage and cost.
+### 3.4 Resource Scheduling / 资源调度域
 
-### 4.2 Deployment Flow
+English:
+This domain covers node registration, capability reporting, GPU allocation, scheduling queue, resource locking, and retries.
 
-1. Admin creates a deployment task for a model version.
-2. Orchestrator validates deployment spec and capacity request.
-3. Scheduler selects a target machine or node group.
-4. Worker executes deployment on downstream machine.
-5. Health check verifies SGLang readiness.
-6. Deployment status changes to running, failed, or degraded.
-7. On failure, resources are released and retry policy is applied.
+中文注解：
+这是平台最容易被低估的部分。没有资源锁、重试和状态管理，部署很快会乱掉。
 
-### 4.3 Billing Flow
+### 3.5 API Gateway and Traffic / 网关与流量域
 
-1. Gateway or runtime emits usage events.
-2. Metering worker aggregates input/output tokens and request dimensions.
-3. Billing service calculates cost using pricing rules.
-4. Balance ledger records debit entries.
-5. Low-balance or insufficient-balance policy is applied.
-6. Statement snapshots are generated for later reconciliation.
+English:
+This domain covers request authentication, rate limit, routing, tracing, and request logs.
 
-## 5. Suggested Architecture
+中文注解：
+所有客户请求都应该先经过网关，先鉴权、再限流、再路由、最后记录日志和 usage。
 
-For a solo founder, start with a modular monorepo and a single main backend service, but keep domain boundaries explicit.
+### 3.6 Metering and Billing / 计量与计费域
 
-### 5.1 Phase 1 Architecture
+English:
+This domain covers usage events, token counting, pricing rules, cost calculation, statements, and reconciliation.
 
-- one customer frontend
-- one admin frontend
-- one backend API service
-- one scheduler worker
-- one metering worker
-- one relational database
-- one Redis instance
+中文注解：
+计费不能直接从页面统计，它必须基于原始 usage event 派生，才能做到可复算和可对账。
 
-The API gateway can initially be implemented inside the backend or as a thin dedicated service, depending on traffic and security needs.
+### 3.7 Operations and Observability / 运维与观测域
 
-### 5.2 Phase 2 Evolution
+English:
+This domain covers logs, metrics, alerts, and task history.
 
-Split out when needed:
+中文注解：
+没有这一层，后面定位部署失败、网关错误、计费异常会非常痛苦。
 
-- standalone gateway
-- standalone billing service
-- standalone deployment service
+## 4. Critical Workflows / 核心流程
 
-Do not split too early. Keep the code modular first, service split second.
+### 4.1 Customer API Call Flow / 客户调用链路
 
-## 6. Recommended Tech Stack
+English:
+The customer request goes through API key validation, quota and balance checks, deployment routing, SGLang forwarding, usage recording, and billing generation.
 
-The goal is fast delivery with good maintainability.
+中文注解：
+一条完整链路应该是：用户发请求 -> 网关校验 -> 找到目标部署 -> 转发到 SGLang -> 记录 usage -> 生成账单。
 
-### 6.1 Frontend
+### 4.2 Deployment Flow / 部署链路
 
-- framework: Next.js
-- language: TypeScript
-- UI: Tailwind CSS + a small internal component library
-- charts: ECharts or Recharts
-- auth session handling: NextAuth or custom JWT session layer
+English:
+The admin creates a deployment task, the orchestrator validates the spec, the scheduler selects a node, the worker deploys SGLang, and health checks confirm readiness.
 
-Reason:
+中文注解：
+部署不是“点一下按钮就完成”，而是任务流转、资源选择、执行部署、健康检查、失败回收这一整套流程。
 
-- fast page delivery
-- good admin and portal support
-- SSR or static docs possible
-- easy monorepo integration
+### 4.3 Billing Flow / 计费链路
 
-### 6.2 Backend
+English:
+Usage events are aggregated, transformed into billing records, and then written into the balance ledger.
 
-- runtime: Node.js
-- framework: NestJS or Fastify
-- language: TypeScript
-- ORM: Prisma
-- validation: Zod or class-validator
+中文注解：
+计费一定要拆成“原始事件 -> 聚合统计 -> 账单计算 -> 账本入账”，不要一步写死。
 
-Suggested preference:
+## 5. Suggested Architecture / 推荐架构
 
-- use NestJS if you want strong module structure and conventional layering
-- use Fastify if you want a thinner, lower-ceremony backend
+English:
+Start with a modular monorepo and a single main backend service, then split services only when the load or team size requires it.
 
-For your scenario, NestJS is slightly better because module boundaries matter more than micro performance right now.
+中文注解：
+先模块化，后服务化。对你现在的阶段，不要过早拆微服务，否则维护成本会高于收益。
 
-### 6.3 Infra and Runtime
+### 5.1 Phase 1 Architecture / 第一阶段架构
 
-- database: PostgreSQL
-- cache / queue support: Redis
-- background jobs: BullMQ
-- object storage: S3-compatible storage if model assets or logs need archival
-- reverse proxy: Nginx or gateway service
+English:
+Start with one customer frontend, one admin frontend, one backend API service, one scheduler worker, one metering worker, PostgreSQL, and Redis.
 
-### 6.4 Deployment Target
+中文注解：
+这已经足够支持 MVP，并且结构上还能继续扩展。
 
-Choose one of these early:
+### 5.2 Phase 2 Evolution / 第二阶段演进
 
-- simple VM + Docker deployment
-- Kubernetes-based deployment
+English:
+When necessary, split out standalone gateway, billing service, and deployment service.
 
-Recommendation for MVP:
+中文注解：
+只有当流量、职责或稳定性要求明显上升时，再拆独立服务。
 
-- start with VM + Docker + SSH/agent deployment
-- do not introduce Kubernetes unless you already need multi-node self-healing and autoscaling
+## 6. Recommended Tech Stack / 推荐技术栈
 
-## 7. Repository Layout
+### 6.1 Frontend / 前端
 
-Recommended monorepo layout:
+English:
+Use Next.js and TypeScript, plus Tailwind CSS and a small internal UI package.
 
-```text
-OneManTec/
-  apps/
-    web-portal/
-    web-admin/
-    api-server/
-    scheduler-worker/
-    metering-worker/
-    gateway/
+中文注解：
+对一人公司来说，这个组合足够快，也方便同时支撑门户、后台和文档页面。
 
-  packages/
-    ui/
-    config/
-    shared/
-    domain-auth/
-    domain-customer/
-    domain-model/
-    domain-resource/
-    domain-billing/
-    domain-gateway/
+### 6.2 Backend / 后端
 
-  database/
-    schema/
-    migrations/
-    seeds/
+English:
+Use Node.js with NestJS or Fastify, and Prisma for database access.
 
-  docs/
-    architecture/
-    api/
-    product/
-    runbooks/
+中文注解：
+这里更推荐 NestJS，因为你当前更需要模块结构清楚，而不是极限性能。
 
-  infra/
-    docker/
-    scripts/
-    nginx/
-```
+### 6.3 Infrastructure / 基础设施
 
-## 8. Backend Module Boundaries
+English:
+Use PostgreSQL for relational data, Redis for cache and queues, and BullMQ for background jobs.
 
-Even if implemented inside one backend service, keep these modules separated:
+中文注解：
+这是相对稳妥的基础组合，适合调度任务、usage 聚合和计费异步处理。
 
-### 8.1 auth
+### 6.4 Deployment Target / 部署目标
 
-- login
-- tenant membership
-- role checks
-- API key lifecycle
+English:
+For MVP, start with VM plus Docker deployment for SGLang, and avoid Kubernetes too early.
 
-### 8.2 customer
+中文注解：
+先用虚拟机或裸机加 Docker，把部署链路跑通。Kubernetes 放到后面再说。
 
-- customer profile
-- package binding
-- quota state
-- balance account
+## 7. Repository Layout / 仓库布局
 
-### 8.3 model
+English:
+Use a monorepo with `apps`, `packages`, `database`, `docs`, and `infra`.
 
-- model catalog
-- model version
-- runtime presets
+中文注解：
+这能保证前后端、共享模块、数据库和运维资料各归各位，不容易写成一锅粥。
 
-### 8.4 deployment
+## 8. Backend Boundaries / 后端边界
 
-- deployment tasks
-- deployment records
-- health checks
-- rollout and rollback
+English:
+Even inside one backend service, keep auth, customer, model, deployment, resource, gateway, billing, and ops modules separated.
 
-### 8.5 resource
+中文注解：
+哪怕先写在同一个 `api-server` 里，也要按领域模块分目录和分层，不要全塞到一个 service。
 
-- node inventory
-- resource snapshots
-- scheduling decisions
-- allocation records
+## 9. Core Data Model / 核心数据模型
 
-### 8.6 gateway
+English:
+The initial data model should include users, tenants, api_keys, models, model_versions, nodes, deployments, deployment_tasks, usage_events, and ledger_entries.
 
-- API request validation
-- routing
-- rate limit
-- usage capture
+中文注解：
+这些表基本就是平台最小闭环所需的主干数据。
 
-### 8.7 billing
+## 10. API Surface / API 范围
 
-- pricing rules
-- usage events
-- ledger
-- invoice statement snapshots
+English:
+Separate customer console APIs, admin APIs, and runtime inference APIs.
 
-### 8.8 ops
+中文注解：
+控制台接口和运行时接口不能混着设计，因为它们的鉴权、限流和日志需求完全不同。
 
-- audit
-- alerts
-- notifications
-- job history
+## 11. Scheduling Considerations / 调度注意点
 
-## 9. Core Data Model
+English:
+Scheduling must account for capacity, constraints, locks, retries, and failure recovery.
 
-This is the minimum set of entities you should plan for.
+中文注解：
+调度绝不是简单“选一台机器”，还要考虑容量快照是否过期、资源是否被占、任务是否重复执行。
 
-### 9.1 Identity
+## 12. Billing Considerations / 计费注意点
 
-- users
-- tenants
-- tenant_members
-- roles
-- api_keys
-- sessions
-- audit_logs
+English:
+Define pricing dimensions early and keep raw usage events immutable for recalculation.
 
-### 9.2 Commercial
+中文注解：
+你需要尽早确定按输入 token、输出 token、请求次数还是实例时长计费，否则后面账单口径会反复改。
 
-- plans
-- tenant_plan_bindings
-- balances
-- ledger_entries
-- pricing_rules
-- invoices
+## 13. Security Baseline / 安全基线
 
-### 9.3 Model and Runtime
+English:
+Hash API keys at rest, isolate tenant data, protect admin routes with RBAC, and authenticate node registration.
 
-- models
-- model_versions
-- runtime_templates
-- deployments
-- deployment_tasks
-- deployment_events
+中文注解：
+最基础的安全要求必须从第一版开始做，不然后面补起来代价很高。
 
-### 9.4 Resources
+## 14. Observability Baseline / 观测基线
 
-- nodes
-- node_heartbeats
-- node_resources
-- resource_allocations
-- scheduler_jobs
+English:
+Collect structured logs, deployment logs, node heartbeats, billing metrics, and alert signals.
 
-### 9.5 Traffic and Billing
+中文注解：
+部署失败率、节点失联、低余额、计费任务失败，这些都应该尽早具备可观测性。
 
-- api_requests
-- usage_events
-- billing_records
-- quota_snapshots
+## 15. MVP Scope / MVP 范围
 
-## 10. Suggested Table Fields
+English:
+The MVP should include login, API key management, model catalog, basic balance display, node management, deployment creation, gateway forwarding, usage recording, and billing ledger display.
 
-Only representative fields are listed here.
+中文注解：
+MVP 的重点不是全功能，而是先跑通“开通 -> 部署 -> 调用 -> 计量 -> 计费”。
 
-### 10.1 users
+## 16. Delivery Sequence / 交付顺序
 
-- id
-- email
-- password_hash
-- status
-- created_at
+English:
+Build in the order of foundation, commercial basics, deployment, runtime access, billing, and hardening.
 
-### 10.2 tenants
+中文注解：
+顺序不能乱。先有身份和资源，再有调用；先有 usage，再有账单。
 
-- id
-- name
-- status
-- billing_mode
-- created_at
+## 17. Key Risks / 关键风险
 
-### 10.3 api_keys
+English:
+The main risks are underestimated scheduling complexity, overengineering too early, weak idempotency, and ambiguous billing rules.
 
-- id
-- tenant_id
-- key_prefix
-- key_hash
-- status
-- last_used_at
-- created_at
+中文注解：
+这几个点如果没控制住，后面最容易导致返工、线上故障和客户纠纷。
 
-Store only hash and a displayable prefix, never the raw key after creation.
+## 18. Recommendation / 结论建议
 
-### 10.4 models
+English:
+The best starting stack for this project is monorepo + Next.js + NestJS + PostgreSQL + Prisma + Redis + BullMQ + Docker-based SGLang deployment.
 
-- id
-- name
-- provider
-- category
-- status
-
-### 10.5 model_versions
-
-- id
-- model_id
-- version
-- image_uri
-- startup_command
-- default_config_json
-- status
-
-### 10.6 nodes
-
-- id
-- hostname
-- ip_address
-- region
-- status
-- scheduler_state
-
-### 10.7 node_resources
-
-- id
-- node_id
-- gpu_count
-- gpu_memory_mb
-- cpu_cores
-- memory_mb
-- disk_mb
-- reported_at
-
-### 10.8 deployments
-
-- id
-- tenant_id
-- model_version_id
-- node_id
-- desired_replicas
-- actual_replicas
-- endpoint
-- status
-
-### 10.9 deployment_tasks
-
-- id
-- deployment_id
-- task_type
-- payload_json
-- status
-- retry_count
-- error_message
-- created_at
-
-### 10.10 usage_events
-
-- id
-- tenant_id
-- api_key_id
-- deployment_id
-- model_id
-- input_tokens
-- output_tokens
-- request_count
-- duration_ms
-- occurred_at
-
-### 10.11 ledger_entries
-
-- id
-- tenant_id
-- entry_type
-- amount
-- currency
-- related_usage_event_id
-- balance_after
-- created_at
-
-## 11. API Surface
-
-Split APIs into three categories.
-
-### 11.1 Customer APIs
-
-- `POST /auth/login`
-- `GET /me`
-- `GET /models`
-- `GET /usage/summary`
-- `GET /billing/ledger`
-- `POST /api-keys`
-- `DELETE /api-keys/:id`
-
-### 11.2 Admin APIs
-
-- `GET /admin/users`
-- `POST /admin/models`
-- `POST /admin/deployments`
-- `POST /admin/deployment-tasks/:id/retry`
-- `GET /admin/nodes`
-- `PATCH /admin/pricing-rules/:id`
-
-### 11.3 Runtime APIs
-
-- `POST /v1/chat/completions`
-- `POST /v1/completions`
-- `GET /v1/models`
-
-Keep runtime APIs isolated from console APIs. Different auth, rate limits, and logs apply.
-
-## 12. Scheduling Considerations
-
-The scheduler is not just a CRUD module. It needs explicit policies.
-
-### 12.1 Scheduling Inputs
-
-- required GPU count
-- required GPU memory
-- model-specific constraints
-- region affinity
-- tenant isolation policy
-- current node load
-
-### 12.2 Scheduling Outputs
-
-- selected node
-- allocation record
-- task lease
-- retry policy
-
-### 12.3 Failure Cases
-
-- node offline during deployment
-- partial deployment success
-- health check timeout
-- stale resource snapshot
-- duplicate task execution
-
-Use resource allocation rows and task leases to guarantee idempotency.
-
-## 13. Billing Considerations
-
-Define billing policy before implementation.
-
-### 13.1 Possible Charging Dimensions
-
-- input tokens
-- output tokens
-- request count
-- occupied runtime duration
-- reserved instance duration
-
-### 13.2 Recommended MVP Billing Policy
-
-Start with:
-
-- charge by input tokens
-- charge by output tokens
-- optional request minimum fee
-
-Avoid charging by occupied GPU duration in MVP unless your business explicitly sells dedicated instances.
-
-### 13.3 Financial Safety Rules
-
-- every usage event must have a unique idempotency key
-- ledger writes must be transactional
-- billing recalculation must be repeatable
-- raw usage events should never be overwritten
-
-## 14. Security Requirements
-
-Minimum security baseline:
-
-- API keys hashed at rest
-- admin APIs protected with RBAC
-- operation audit logs
-- per-tenant data isolation
-- node registration authentication
-- secrets not stored in frontend
-- rate limiting on auth and runtime APIs
-
-## 15. Observability Requirements
-
-You will need this much earlier than expected.
-
-- structured logs for all requests and jobs
-- deployment task logs
-- node heartbeat status
-- billing event processing metrics
-- alerting for deployment failure rate and low balance
-
-## 16. MVP Scope
-
-Do not build everything first. Start with the minimum closed-loop platform.
-
-### MVP includes
-
-- customer login
-- API key management
-- model catalog
-- basic balance or quota display
-- admin machine pool management
-- admin deployment creation
-- scheduler worker for single-node deployment
-- gateway request auth and forwarding
-- usage event recording
-- simple billing ledger display
-
-### MVP excludes
-
-- multi-region routing
-- advanced autoscaling
-- invoice issuance
-- team collaboration features
-- full Kubernetes operator
-- complex revenue analytics
-
-## 17. Delivery Sequence
-
-### Phase 0: foundation
-
-- monorepo setup
-- lint / format / test baseline
-- shared config
-- auth skeleton
-- database schema init
-
-### Phase 1: commercial basics
-
-- tenant and API key management
-- plans and balances
-- customer portal basics
-
-### Phase 2: model deployment
-
-- node registry
-- model registry
-- deployment tasks
-- scheduler worker
-- SGLang runtime integration
-
-### Phase 3: runtime access
-
-- API gateway
-- request forwarding
-- rate limit
-- request logs
-
-### Phase 4: billing loop
-
-- usage events
-- billing records
-- ledger and usage dashboard
-
-### Phase 5: operational hardening
-
-- alerts
-- retry policies
-- rollback support
-- audit improvements
-
-## 18. Key Risks
-
-### 18.1 Underestimated scope
-
-The biggest risk is treating scheduling and billing as side features. They are core product capabilities.
-
-### 18.2 Overengineering too early
-
-Do not split into too many services before you have real load or team growth.
-
-### 18.3 Weak deployment idempotency
-
-If deployment tasks can run twice without guards, resource accounting and service state will diverge.
-
-### 18.4 Ambiguous billing rules
-
-If pricing logic is not explicit early, customer disputes and code rewrites will follow.
-
-## 19. Strong Recommendation
-
-The best starting point for your case:
-
-- monorepo
-- Next.js for both frontends
-- NestJS for backend
-- PostgreSQL + Prisma
-- Redis + BullMQ
-- Docker-based downstream deployment of SGLang
-
-This is simple enough for one person, but still structured enough to grow.
-
-## 20. Next Steps
-
-Suggested immediate next actions:
-
-1. finalize tech stack
-2. define database schema
-3. scaffold monorepo
-4. implement auth, tenant, and API key modules
-5. implement node registry and deployment tasks
-6. implement gateway and usage metering
-
-Once these are in place, the platform can evolve without major structural rewrites.
+中文注解：
+这是对你当前阶段最均衡的一套方案，复杂度适中，可持续推进。

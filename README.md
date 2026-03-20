@@ -63,9 +63,9 @@ infra/
 
 ## 核心文档
 
-- 架构总览：[platform-overview.md](/Users/jiangguoqing/Documents/OneManTec/docs/architecture/platform-overview.md)
-- MVP 路线图：[mvp-roadmap.md](/Users/jiangguoqing/Documents/OneManTec/docs/product/mvp-roadmap.md)
-- 初版开发计划：[initial-plan.md](/Users/jiangguoqing/Documents/OneManTec/docs/product/initial-plan.md)
+- 架构总览 / Architecture Overview: [platform-overview.md](docs/architecture/platform-overview.md)
+- MVP 路线图 / MVP Roadmap: [mvp-roadmap.md](docs/product/mvp-roadmap.md)
+- 初版开发计划 / Initial Plan: [initial-plan.md](docs/product/initial-plan.md)
 
 ## 当前建议的推进顺序
 
@@ -91,4 +91,4 @@ infra/
 - 工程初始化
 - 业务代码
 - 数据库 schema
-- Git 初始化提交
+- 更多可运行应用代码
