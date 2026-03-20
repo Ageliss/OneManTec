@@ -64,6 +64,14 @@ function createInMemoryRepository(seed = createSeedData()) {
     listDeploymentsByProjectId(projectId) {
       return seed.deployments.filter((deployment) => deployment.projectId === projectId);
     },
+
+    getDeploymentTaskById(taskId) {
+      return seed.deploymentTasks.find((task) => task.id === taskId) ?? null;
+    },
+
+    listDeploymentTaskEventsByTaskId(taskId) {
+      return seed.deploymentTaskEvents.filter((event) => event.taskId === taskId);
+    },
   };
 }
 

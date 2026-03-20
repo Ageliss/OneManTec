@@ -136,9 +136,48 @@ model Deployment {
   status     String      @default("pending")
   createdAt  DateTime    @default(now()) @map("created_at")
   project    Project?    @relation(fields: [projectId], references: [id])
+  tasks      DeploymentTask[]
   usageEvents UsageEvent[]
 
   @@map("deployments")
+}
+
+model DeploymentTask {
+  id                 String                @id
+  deploymentId       String                @map("deployment_id")
+  projectId          String?               @map("project_id")
+  taskType           String                @map("task_type")
+  status             String                @default("pending")
+  nodeId             String?               @map("node_id")
+  modelAlias         String                @map("model_alias")
+  modelPath          String                @map("model_path")
+  image              String?               @map("image")
+  requestedGpuCount  Int                   @default(1) @map("requested_gpu_count")
+  requestedPort      Int?                  @map("requested_port")
+  tensorParallelSize Int?                  @map("tensor_parallel_size")
+  runtimeConfig      Json                  @default("{}") @map("runtime_config")
+  errorCode          String?               @map("error_code")
+  errorMessage       String?               @map("error_message")
+  createdAt          DateTime              @default(now()) @map("created_at")
+  updatedAt          DateTime              @updatedAt @map("updated_at")
+  deployment         Deployment            @relation(fields: [deploymentId], references: [id])
+  project            Project?              @relation(fields: [projectId], references: [id])
+  events             DeploymentTaskEvent[]
+
+  @@map("deployment_tasks")
+}
+
+model DeploymentTaskEvent {
+  id        String          @id
+  taskId    String          @map("task_id")
+  status    String
+  eventType String          @map("event_type")
+  message   String?
+  payload   Json            @default("{}")
+  createdAt DateTime        @default(now()) @map("created_at")
+  task      DeploymentTask  @relation(fields: [taskId], references: [id])
+
+  @@map("deployment_task_events")
 }
 
 model RoutingRule {

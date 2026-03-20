@@ -19,6 +19,8 @@ test("prisma repository maps contract methods to prisma delegates", async () => 
     planPrice: { findFirst: async () => ({ id: "price-1" }) },
     riskPolicy: { findFirst: async () => ({ id: "risk-1" }) },
     deploymentRecord: { findMany: async () => [{ id: "dep-1" }] },
+    deploymentTask: { findUnique: async () => ({ id: "task-1" }) },
+    deploymentTaskEvent: { findMany: async () => [{ id: "task-event-1" }] },
   };
 
   const repository = createPrismaRepository(prisma);
@@ -30,4 +32,6 @@ test("prisma repository maps contract methods to prisma delegates", async () => 
   assert.equal((await repository.getApiKeyByToken("token")).id, "key-1");
   assert.equal(routeHealth["node-a"], "healthy");
   assert.equal((await repository.listDeploymentsByProjectId("project-1"))[0].id, "dep-1");
+  assert.equal((await repository.getDeploymentTaskById("task-1")).id, "task-1");
+  assert.equal((await repository.listDeploymentTaskEventsByTaskId("task-1"))[0].id, "task-event-1");
 });

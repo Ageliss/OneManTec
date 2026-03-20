@@ -14,4 +14,6 @@ test("in-memory repository returns seeded project and policy data", () => {
   assert.equal(repository.listModels()[0].id, "deepseek-chat");
   assert.equal(repository.listNodes()[0].id, "node-a");
   assert.equal(repository.listDeploymentsByProjectId("project-demo")[0].id, "dep-demo");
+  assert.equal(repository.getDeploymentTaskById("task-demo").modelPath, "/models/deepseek-chat");
+  assert.equal(repository.listDeploymentTaskEventsByTaskId("task-demo")[0].eventType, "task_created");
 });

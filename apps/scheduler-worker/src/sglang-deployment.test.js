@@ -66,9 +66,10 @@ test("includes optional args, env, and extra volumes in docker plan", () => {
   ].slice(-8));
   assert.match(plan.dockerCommand, /HF_TOKEN=secret-token/);
   assert.match(plan.dockerCommand, /--gpus/);
+  assert.match(plan.dockerCommand, /--trust-remote-code/);
 });
 
-test("throws for missing required fields or invalid sizes", () => {
+test("throws for invalid deployment spec", () => {
   assert.throws(() => {
     planSglangDeployment({
       modelAlias: "deepseek-chat",

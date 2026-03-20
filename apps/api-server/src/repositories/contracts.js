@@ -17,6 +17,8 @@ function ensureRepositoryContract(repository) {
     "getRouteHealth",
     "getRiskPolicyByProjectId",
     "listDeploymentsByProjectId",
+    "getDeploymentTaskById",
+    "listDeploymentTaskEventsByTaskId",
   ];
 
   const missing = requiredMethods.filter(

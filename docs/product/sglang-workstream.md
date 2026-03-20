@@ -20,10 +20,11 @@
 这条支线建议负责：
 
 - `scheduler-worker` 内的 deployment planner
+- deployment task 到 scheduler payload 的转换
 - node 执行器适配层
 - `SGLang` 参数模板与健康检查
 - deployment runbook
-- 相关单测和回归测试
+- 相关单测和 runbook
 
 ## 3. Sync Rhythm
 
@@ -38,9 +39,9 @@
 
 1. deployment planner + unit tests
 2. deployment task schema / contract fields
-3. node executor abstraction
-4. deployment status transition + retry policy
-5. admin/read API integration
+3. scheduler payload + task event contract
+4. node executor abstraction
+5. deployment status transition + retry policy
 
 ## 5. Quality Bar
 

@@ -77,6 +77,40 @@ function createSeedData() {
         targetNode: "node-a",
       },
     ],
+    deploymentTasks: [
+      {
+        id: "task-demo",
+        deploymentId: "dep-demo",
+        projectId: "project-demo",
+        taskType: "deploy",
+        status: "pending",
+        nodeId: "node-a",
+        modelAlias: "deepseek-chat",
+        modelPath: "/models/deepseek-chat",
+        image: "lmsysorg/sglang:latest",
+        requestedGpuCount: 1,
+        requestedPort: 30000,
+        tensorParallelSize: 1,
+        runtimeConfig: {
+          maxRunningRequests: 64,
+          schedulerHints: {
+            zone: "cn-east-a",
+          },
+        },
+      },
+    ],
+    deploymentTaskEvents: [
+      {
+        id: "task-event-demo",
+        taskId: "task-demo",
+        status: "pending",
+        eventType: "task_created",
+        message: "Deployment task created and waiting for scheduler pickup",
+        payload: {
+          source: "admin-console",
+        },
+      },
+    ],
     routeHealth: {
       "node-a": "healthy",
       "node-b": "degraded",

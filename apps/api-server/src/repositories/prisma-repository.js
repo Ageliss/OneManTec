@@ -62,6 +62,17 @@ function createPrismaRepository(prisma) {
     async listDeploymentsByProjectId(projectId) {
       return prisma.deploymentRecord.findMany({ where: { projectId } });
     },
+
+    async getDeploymentTaskById(taskId) {
+      return prisma.deploymentTask.findUnique({ where: { id: taskId } });
+    },
+
+    async listDeploymentTaskEventsByTaskId(taskId) {
+      return prisma.deploymentTaskEvent.findMany({
+        where: { taskId },
+        orderBy: { createdAt: "asc" },
+      });
+    },
   };
 }
 

@@ -4,15 +4,36 @@
 
 这份 runbook 面向 `scheduler-worker` 这条支线，先约定 OneManTec 如何把一个 deployment task 翻译成可执行的 `SGLang` Docker 运行计划。
 
-第一阶段目标不是直接做远程执行器，而是把下面三件事先固定下来：
+第一阶段目标不是直接做远程执行器，而是把下面几件事先固定下来：
 
+- deployment task 的最小字段
+- deployment task 到 scheduler payload 的生成规则
 - deployment spec 的最小字段
 - `docker run` / env / volume / health check 的生成规则
 - 与主力开发主线对接时的边界
 
 ## 2. Current Contract
 
-当前 `apps/scheduler-worker/src/sglang-deployment.js` 已输出：
+`apps/scheduler-worker/src/job-payload.js` 当前负责把 deployment task 转成 scheduler payload。
+
+最小 deployment task 字段：
+
+- `id`
+- `deploymentId`
+- `taskType`
+- `modelAlias`
+- `modelPath`
+
+推荐补充字段：
+
+- `projectId`
+- `nodeId`
+- `requestedGpuCount`
+- `requestedPort`
+- `tensorParallelSize`
+- `runtimeConfig`
+
+`apps/scheduler-worker/src/sglang-deployment.js` 当前输出：
 
 - `containerName`
 - `image`
@@ -24,32 +45,12 @@
 - `healthCheck`
 - `runtime`
 
-最小输入字段：
-
-- `deploymentId`
-- `modelAlias`
-- `modelPath`
-
-推荐补充字段：
-
-- `nodeId`
-- `gpuCount`
-- `tensorParallelSize`
-- `maxRunningRequests`
-- `maxTotalTokens`
-- `memFractionStatic`
-- `extraEnv`
-- `extraArgs`
-- `volumes`
-
 ## 3. Deployment Flow Boundary
-
-建议把部署链路拆成下面几层：
 
 1. `api-server`
    负责 deployment task API、状态查询、参数保存、权限校验。
 2. `scheduler-worker`
-   负责选节点、生成 `SGLang` deployment plan、执行部署、轮询健康检查、写回状态。
+   负责消费 deployment task、生成 job payload、生成 `SGLang` deployment plan、执行部署、轮询健康检查、写回状态。
 3. node agent / SSH executor
    负责在目标机器上真正执行 `docker run`、`docker logs`、`docker rm -f` 等命令。
 
@@ -66,16 +67,16 @@
 
 ## 5. Collaboration Rule
 
-- 不直接改主线已有 HTTP 路由语义，先补 worker 与 runbook。
+- 不直接改主线已有 HTTP 路由语义，先补 worker 与契约。
 - deployment 字段扩展时，优先新增字段，不轻易改已有字段名字。
 - 每次改动都带 UT。
-- 同步主力分支前先 `git fetch` + `git rebase`，减少大体积冲突。
-- PR 尽量按“契约 / worker 内核 / 执行器 / 状态回写 / 文档”分批提交，不做超大 PR。
+- 每天至少同步一次主力分支。
+- PR 尽量按“契约 / worker 内核 / 执行器 / 状态回写 / 文档”分批提交。
 
 ## 6. Next Implementation Order
 
 1. 把 deployment task schema 补充到 Prisma
-2. 增加 scheduler job payload 定义
-3. 接入 node executor
-4. 增加容器清理 / 重试 / rollback
-5. 补 deployment history 和 task event
+2. 接入 node executor
+3. 增加容器清理 / 重试 / rollback
+4. 补 deployment history 和 task event 查询接口
+5. 把 task status 回写接入控制面
