@@ -6,6 +6,8 @@ function ensureRepositoryContract(repository) {
   const requiredMethods = [
     "getTenantById",
     "getProjectById",
+    "listModels",
+    "listNodes",
     "getApiKeyById",
     "getApiKeyByToken",
     "getApiKeyPolicyByKeyId",
@@ -14,6 +16,7 @@ function ensureRepositoryContract(repository) {
     "getDefaultPricingRule",
     "getRouteHealth",
     "getRiskPolicyByProjectId",
+    "listDeploymentsByProjectId",
   ];
 
   const missing = requiredMethods.filter(

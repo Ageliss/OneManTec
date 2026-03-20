@@ -2,10 +2,16 @@ const { buildServerManifest } = require("./server-manifest.js");
 const { buildModuleLayout } = require("./module-layout.js");
 const { createControlPlane } = require("./control-plane.js");
 const { createHttpServer } = require("./http-server.js");
+const { resolveRepositoryMode } = require("./repositories/runtime-config.js");
 
 if (require.main === module) {
   const port = Number(process.env.PORT ?? 3000);
-  const server = createHttpServer();
+  const repositoryMode = resolveRepositoryMode();
+  const server = createHttpServer({
+    repositoryOptions: {
+      mode: repositoryMode,
+    },
+  });
 
   server.listen(port, () => {
     const manifest = buildServerManifest();
@@ -15,6 +21,7 @@ if (require.main === module) {
           ...manifest,
           moduleLayout: buildModuleLayout(),
           executableModules: Object.keys(createControlPlane()),
+          repositoryMode,
           listeningOn: port,
         },
         null,

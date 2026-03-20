@@ -7,7 +7,7 @@
     "dev": "node src/index.js",
     "build": "echo \"No build step yet for api-server domain skeleton\"",
     "lint": "echo \"TODO: lint api-server\"",
-    "test": "node --test src/*.test.js src/modules/*/*.test.js",
+    "test": "node --test src/*.test.js src/modules/*/*.test.js src/repositories/*.test.js src/use-cases/*.test.js",
     "typecheck": "echo \"TypeScript app scaffold pending\"",
     "format": "echo \"TODO: format api-server\""
   }

@@ -15,9 +15,9 @@ const { requireFields } = require("./validation.js");
 const { createErrorResponse, createSuccessResponse } = require("./errors.js");
 const { getRequestId } = require("./request-context.js");
 
-function createHttpApp() {
+function createHttpApp(options = {}) {
   const controlPlane = createControlPlane();
-  const repository = createRepository();
+  const repository = options.repository ?? createRepository(options.repositoryOptions);
 
   function handleRoute({ method, pathname, headers = {}, body = {} }) {
     const requestId = getRequestId(headers);

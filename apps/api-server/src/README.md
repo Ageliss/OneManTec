@@ -16,8 +16,14 @@
   用 Node 原生 `http` 把 `http-app` 挂出来，避免太早引入框架。
 - `repositories/in-memory-repository.js`
   提供一层可替换的数据读取接口，后续可以平滑替换成 Prisma。
+- `repositories/index.js`
+  统一管理 repository 模式选择。当前支持 `memory` 和 `prisma` 两种模式。
 - `repositories/contracts.js`
   明确 repository 需要满足的方法边界，后续换数据源时有基线。
+- `repositories/runtime-config.js`
+  解析 `API_SERVER_REPOSITORY_MODE`，让服务启动时明确自己在用哪种数据源。
+- `repositories/prisma-client.js`
+  负责按需加载 `@prisma/client`，并在依赖缺失时给出清楚错误。
 - `use-cases/demo-request-preview.js`
   演示真实控制面如何从 repository 取数据，再经过 auth / routing / billing 链路。
 - `use-cases/demo-settlement-preview.js`
@@ -69,6 +75,12 @@
 - 支持从 `Authorization: Bearer ...` 读取 API key
 - 支持通过 `x-request-id` 把请求 ID 透传回响应
 - 成功和失败响应都走统一包裹结构
+
+当前 repository 模式：
+
+- 默认使用 `memory`
+- 当 `API_SERVER_REPOSITORY_MODE=prisma` 时，会尝试加载 `@prisma/client`
+- 这一步只是把接入点打通，还没有替换当前 demo 数据链路
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 

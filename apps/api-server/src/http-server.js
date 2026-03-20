@@ -2,8 +2,8 @@ const http = require("node:http");
 const { URL } = require("node:url");
 const { createHttpApp } = require("./http-app.js");
 
-function createHttpServer() {
-  const app = createHttpApp();
+function createHttpServer(options = {}) {
+  const app = createHttpApp(options);
 
   return http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
