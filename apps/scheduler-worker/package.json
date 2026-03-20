@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "echo \"TODO: initialize scheduler-worker\"",
+    "dev": "node src/index.js",
     "build": "echo \"TODO: build scheduler-worker\"",
     "lint": "echo \"TODO: lint scheduler-worker\"",
-    "test": "echo \"TODO: test scheduler-worker\"",
+    "test": "node --test src/*.test.js",
     "typecheck": "tsc -p tsconfig.json",
     "format": "echo \"TODO: format scheduler-worker\""
   }

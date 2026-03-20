@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "echo \"TODO: initialize Next.js app for web-portal\"",
-    "build": "echo \"TODO: build web-portal\"",
+    "dev": "node server.js",
+    "build": "echo \"No build step yet for web-portal static shell\"",
     "lint": "echo \"TODO: lint web-portal\"",
-    "test": "echo \"TODO: test web-portal\"",
-    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test src/*.test.js",
+    "typecheck": "echo \"TypeScript migration pending for web-portal\"",
     "format": "echo \"TODO: format web-portal\""
   }
 }
