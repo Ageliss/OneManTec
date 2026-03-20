@@ -13,6 +13,8 @@
 - `packages/` 放共享模块和领域代码
 - `database/` 放 schema、migration、seed
 - `docs/` 放产品、架构、运维文档
+- 路由、预算、项目、分析、对账等治理能力必须单独建模块
+- 产品、结算、上游凭证、风控也必须单独建模块
 
 ## 3. 命名约定
 
@@ -43,10 +45,12 @@
 
 当前优先级从高到低：
 
-1. auth / tenant / api key
-2. model / node / deployment
-3. gateway / metering / billing
-4. observability / alert / audit
+1. auth / tenant / project / api key
+2. quota / routing-policy / key-governance
+3. product / settlement / provider-credentials
+4. model / node / deployment
+5. gateway / metering / billing / analytics / risk-control
+6. observability / alert / audit / reconciliation
 
 ## 7. 注释约定
 
@@ -61,3 +65,5 @@
 1. 初始化各 app 的 package 和 tsconfig
 2. 初始化数据库 schema
 3. 初始化后端模块骨架
+4. 预留 project / quota / routing / analytics 模块
+5. 预留 product / settlement / provider-credentials / risk-control 模块
