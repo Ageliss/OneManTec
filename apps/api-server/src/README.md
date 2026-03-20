@@ -6,8 +6,12 @@
 
 - `server-manifest.js`
   用最简单的方式把后端核心模块写清楚，避免后面搭 NestJS 时边界漂移。
+- `module-layout.js`
+  把 manifest 转成真实目录映射，保证模块文档和模块职责一致。
 - `server-manifest.test.js`
   用单元测试保证当前模块地图不会被无意改坏。
+- `modules/*/README.md`
+  把每个后端模块的职责单独写清楚。
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 

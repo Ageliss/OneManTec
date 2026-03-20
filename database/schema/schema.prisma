@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                 String               @id
+  name               String
+  status             String               @default("active")
+  billingMode        String               @default("prepaid") @map("billing_mode")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  projects           Project[]
+  apiKeys            ApiKey[]
+  quotaPolicies      QuotaPolicy[]
+  usageEvents        UsageEvent[]
+  ledgerEntries      LedgerEntry[]
+  providerCredentials ProviderCredential[]
+  rechargeOrders     RechargeOrder[]
+  invoices           Invoice[]
+  refunds            Refund[]
+  riskEvents         RiskEvent[]
+
+  @@map("tenants")
+}
+
+model Project {
+  id            String        @id
+  tenantId      String        @map("tenant_id")
+  name          String
+  environment   String        @default("prod")
+  status        String        @default("active")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  apiKeys       ApiKey[]
+  quotaPolicies QuotaPolicy[]
+  deployments   Deployment[]
+  routingRules  RoutingRule[]
+  usageEvents   UsageEvent[]
+
+  @@map("projects")
+}
+
+model ApiKey {
+  id          String         @id
+  tenantId    String         @map("tenant_id")
+  projectId   String?        @map("project_id")
+  keyPrefix   String         @map("key_prefix")
+  keyHash     String         @map("key_hash")
+  status      String         @default("active")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  tenant      Tenant         @relation(fields: [tenantId], references: [id])
+  project     Project?       @relation(fields: [projectId], references: [id])
+  policies    ApiKeyPolicy[]
+  usageEvents UsageEvent[]
+  riskEvents  RiskEvent[]
+
+  @@map("api_keys")
+}
+
+model ApiKeyPolicy {
+  id                   String   @id
+  apiKeyId             String   @map("api_key_id")
+  allowedModels        Json     @default("[]") @map("allowed_models")
+  allowedIps           Json     @default("[]") @map("allowed_ips")
+  blockedIps           Json     @default("[]") @map("blocked_ips")
+  maxRequestsPerMinute Int?     @map("max_requests_per_minute")
+  createdAt            DateTime @default(now()) @map("created_at")
+  apiKey               ApiKey   @relation(fields: [apiKeyId], references: [id])
+
+  @@map("api_key_policies")
+}
+
+model QuotaPolicy {
+  id             String    @id
+  tenantId       String    @map("tenant_id")
+  projectId      String?   @map("project_id")
+  monthlyLimit   Decimal   @default(0) @db.Decimal(18, 6) @map("monthly_limit")
+  softLimitRatio Decimal   @default(0.8) @db.Decimal(5, 4) @map("soft_limit_ratio")
+  hardStop       Boolean   @default(true) @map("hard_stop")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  tenant         Tenant    @relation(fields: [tenantId], references: [id])
+  project        Project?  @relation(fields: [projectId], references: [id])
+
+  @@map("quota_policies")
+}
+
+model Product {
+  id             String      @id
+  code           String      @unique
+  name           String
+  productType    String      @map("product_type")
+  settlementType String      @map("settlement_type")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  planPrices     PlanPrice[]
+
+  @@map("products")
+}
+
+model PlanPrice {
+  id               String    @id
+  productId        String    @map("product_id")
+  pricingVersion   Int       @map("pricing_version")
+  inputTokenPrice  Decimal   @default(0) @db.Decimal(18, 6) @map("input_token_price")
+  outputTokenPrice Decimal   @default(0) @db.Decimal(18, 6) @map("output_token_price")
+  requestBasePrice Decimal   @default(0) @db.Decimal(18, 6) @map("request_base_price")
+  currency         String    @default("USD")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  product          Product   @relation(fields: [productId], references: [id])
+
+  @@map("plan_prices")
+}
+
+model ProviderCredential {
+  id               String    @id
+  tenantId         String?   @map("tenant_id")
+  providerCode     String    @map("provider_code")
+  credentialType   String    @map("credential_type")
+  secretCiphertext String    @map("secret_ciphertext")
+  status           String    @default("active")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  tenant           Tenant?   @relation(fields: [tenantId], references: [id])
+
+  @@map("provider_credentials")
+}
+
+model Deployment {
+  id         String      @id
+  projectId  String?     @map("project_id")
+  modelName  String      @map("model_name")
+  targetNode String      @map("target_node")
+  endpoint   String?
+  status     String      @default("pending")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  project    Project?    @relation(fields: [projectId], references: [id])
+  usageEvents UsageEvent[]
+
+  @@map("deployments")
+}
+
+model RoutingRule {
+  id               String    @id
+  projectId        String?   @map("project_id")
+  modelAlias       String    @map("model_alias")
+  preferredTargets Json      @default("[]") @map("preferred_targets")
+  isEnabled        Boolean   @default(true) @map("is_enabled")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  project          Project?  @relation(fields: [projectId], references: [id])
+
+  @@map("routing_rules")
+}
+
+model UsageEvent {
+  id            String       @id
+  tenantId      String       @map("tenant_id")
+  projectId     String?      @map("project_id")
+  apiKeyId      String?      @map("api_key_id")
+  deploymentId  String?      @map("deployment_id")
+  modelName     String       @map("model_name")
+  inputTokens   Int          @default(0) @map("input_tokens")
+  outputTokens  Int          @default(0) @map("output_tokens")
+  requestCount  Int          @default(1) @map("request_count")
+  estimatedCost Decimal      @default(0) @db.Decimal(18, 6) @map("estimated_cost")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  tenant        Tenant       @relation(fields: [tenantId], references: [id])
+  project       Project?     @relation(fields: [projectId], references: [id])
+  apiKey        ApiKey?      @relation(fields: [apiKeyId], references: [id])
+  deployment    Deployment?  @relation(fields: [deploymentId], references: [id])
+  ledgerEntries LedgerEntry[]
+
+  @@map("usage_events")
+}
+
+model LedgerEntry {
+  id           String     @id
+  tenantId     String     @map("tenant_id")
+  usageEventId String?    @map("usage_event_id")
+  amount       Decimal    @db.Decimal(18, 6)
+  balanceAfter Decimal    @db.Decimal(18, 6) @map("balance_after")
+  currency     String     @default("USD")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  tenant       Tenant     @relation(fields: [tenantId], references: [id])
+  usageEvent   UsageEvent? @relation(fields: [usageEventId], references: [id])
+
+  @@map("ledger_entries")
+}
+
+model RechargeOrder {
+  id        String    @id
+  tenantId  String    @map("tenant_id")
+  amount    Decimal   @db.Decimal(18, 6)
+  currency  String    @default("USD")
+  status    String    @default("pending")
+  createdAt DateTime  @default(now()) @map("created_at")
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  invoices  Invoice[]
+  refunds   Refund[]
+
+  @@map("recharge_orders")
+}
+
+model Invoice {
+  id              String         @id
+  tenantId        String         @map("tenant_id")
+  rechargeOrderId String?        @map("recharge_order_id")
+  invoiceCode     String?        @map("invoice_code")
+  status          String         @default("draft")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
+  rechargeOrder   RechargeOrder? @relation(fields: [rechargeOrderId], references: [id])
+
+  @@map("invoices")
+}
+
+model Refund {
+  id              String         @id
+  tenantId        String         @map("tenant_id")
+  rechargeOrderId String?        @map("recharge_order_id")
+  amount          Decimal        @db.Decimal(18, 6)
+  status          String         @default("pending")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
+  rechargeOrder   RechargeOrder? @relation(fields: [rechargeOrderId], references: [id])
+
+  @@map("refunds")
+}
+
+model RiskEvent {
+  id        String    @id
+  tenantId  String?   @map("tenant_id")
+  apiKeyId  String?   @map("api_key_id")
+  riskType  String    @map("risk_type")
+  severity  String
+  payload   Json      @default("{}")
+  createdAt DateTime  @default(now()) @map("created_at")
+  tenant    Tenant?   @relation(fields: [tenantId], references: [id])
+  apiKey    ApiKey?   @relation(fields: [apiKeyId], references: [id])
+
+  @@map("risk_events")
+}
