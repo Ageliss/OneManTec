@@ -24,6 +24,12 @@
   演示结算相关流程的预览输出。
 - `use-cases/demo-risk-preview.js`
   演示风控检测和 risk event 生成。
+- `use-cases/list-admin-models.js`
+  返回控制面模型目录。
+- `use-cases/list-admin-nodes.js`
+  返回节点列表和健康汇总。
+- `use-cases/resolve-deployment.js`
+  负责按 project 和 model alias 找活动部署。
 - `use-cases/mock-chat-completion.js`
   提供最小可用的 mock runtime 生成逻辑，并复用现有控制链。
 - `validation.js`
@@ -44,6 +50,8 @@
 - `GET /health`
 - `GET /manifest`
 - `GET /modules`
+- `GET /admin/models`
+- `GET /admin/nodes`
 - `GET /v1/models`
 - `POST /preview/auth`
 - `POST /preview/budget`
@@ -51,6 +59,7 @@
 - `POST /preview/billing`
 - `POST /preview/request`
 - `POST /preview/demo-request`
+- `POST /preview/deployment-resolution`
 - `POST /preview/demo-settlement`
 - `POST /preview/demo-risk`
 - `POST /v1/chat/completions`
@@ -65,6 +74,9 @@
 
 - `modules/auth`
 - `modules/project`
+- `modules/model`
+- `modules/resource`
+- `modules/deployment`
 - `modules/routing`
 - `modules/billing`
 - `modules/settlement`

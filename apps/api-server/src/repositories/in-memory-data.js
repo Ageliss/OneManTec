@@ -45,6 +45,19 @@ function createSeedData() {
         spentThisMonth: 120,
       },
     ],
+    models: [
+      {
+        id: "deepseek-chat",
+        displayName: "DeepSeek Chat",
+        provider: "onemantec",
+        capabilities: ["chat", "stream"],
+        visibility: "public",
+      },
+    ],
+    nodes: [
+      { id: "node-a", region: "cn-east", health: "healthy", gpuCount: 8 },
+      { id: "node-b", region: "cn-east", health: "degraded", gpuCount: 8 },
+    ],
     routingRules: [
       {
         id: "route-demo",
@@ -52,6 +65,16 @@ function createSeedData() {
         modelAlias: "deepseek-chat",
         preferredTargets: ["node-a", "node-b"],
         isEnabled: true,
+      },
+    ],
+    deployments: [
+      {
+        id: "dep-demo",
+        projectId: "project-demo",
+        modelAlias: "deepseek-chat",
+        status: "running",
+        endpoint: "http://node-a/v1/chat/completions",
+        targetNode: "node-a",
       },
     ],
     routeHealth: {

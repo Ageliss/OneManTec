@@ -123,6 +123,32 @@ test("GET /v1/models resolves allowed models from bearer token", () => {
   assert.equal(response.body.data.data[0].id, "deepseek-chat");
 });
 
+test("GET /admin/models returns admin model catalog", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "GET",
+    pathname: "/admin/models",
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.models[0].id, "deepseek-chat");
+});
+
+test("GET /admin/nodes returns node inventory summary", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "GET",
+    pathname: "/admin/nodes",
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.summary.total, 2);
+});
+
 test("POST /preview/demo-settlement creates settlement preview records", () => {
   const app = createHttpApp();
 
@@ -140,6 +166,23 @@ test("POST /preview/demo-settlement creates settlement preview records", () => {
   assert.equal(response.body.ok, true);
   assert.equal(response.body.data.rechargeOrder.amount, 100);
   assert.equal(response.body.data.refundRequest.amount, 15);
+});
+
+test("POST /preview/deployment-resolution returns active deployment", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/preview/deployment-resolution",
+    body: {
+      projectId: "project-demo",
+      modelAlias: "deepseek-chat",
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.deployment.targetNode, "node-a");
 });
 
 test("POST /preview/demo-risk emits risk event for abnormal traffic", () => {

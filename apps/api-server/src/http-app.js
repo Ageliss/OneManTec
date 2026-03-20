@@ -8,6 +8,9 @@ const { previewDemoRisk } = require("./use-cases/demo-risk-preview.js");
 const { createMockChatCompletion } = require("./use-cases/mock-chat-completion.js");
 const { resolveRuntimeContext } = require("./use-cases/runtime-context.js");
 const { listModels } = require("./use-cases/list-models.js");
+const { listAdminModels } = require("./use-cases/list-admin-models.js");
+const { listAdminNodes } = require("./use-cases/list-admin-nodes.js");
+const { resolveDeployment } = require("./use-cases/resolve-deployment.js");
 const { requireFields } = require("./validation.js");
 const { createErrorResponse, createSuccessResponse } = require("./errors.js");
 const { getRequestId } = require("./request-context.js");
@@ -36,6 +39,22 @@ function createHttpApp() {
       return createSuccessResponse(200, {
         modules: buildModuleLayout(),
       }, requestId);
+    }
+
+    if (method === "GET" && pathname === "/admin/models") {
+      return createSuccessResponse(
+        200,
+        listAdminModels({ repository, controlPlane }),
+        requestId,
+      );
+    }
+
+    if (method === "GET" && pathname === "/admin/nodes") {
+      return createSuccessResponse(
+        200,
+        listAdminNodes({ repository, controlPlane }),
+        requestId,
+      );
     }
 
     if (method === "GET" && pathname === "/v1/models") {
@@ -201,6 +220,27 @@ function createHttpApp() {
 
       if (!result.ok) {
         return createErrorResponse(404, result.error, "Demo data was not found", undefined, requestId);
+      }
+
+      return createSuccessResponse(200, result, requestId);
+    }
+
+    if (method === "POST" && pathname === "/preview/deployment-resolution") {
+      const validationError = requireFields(body, ["projectId", "modelAlias"]);
+      if (validationError) {
+        validationError.body.requestId = requestId;
+        return validationError;
+      }
+
+      const result = resolveDeployment({
+        repository,
+        controlPlane,
+        projectId: body.projectId,
+        modelAlias: body.modelAlias,
+      });
+
+      if (!result.ok) {
+        return createErrorResponse(404, result.error, "Deployment was not found", undefined, requestId);
       }
 
       return createSuccessResponse(200, result, requestId);

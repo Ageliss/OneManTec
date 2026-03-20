@@ -14,6 +14,14 @@ function createInMemoryRepository(seed = createSeedData()) {
       return seed.projects.find((project) => project.id === projectId) ?? null;
     },
 
+    listModels() {
+      return seed.models;
+    },
+
+    listNodes() {
+      return seed.nodes;
+    },
+
     getApiKeyById(apiKeyId) {
       return seed.apiKeys.find((apiKey) => apiKey.id === apiKeyId) ?? null;
     },
@@ -51,6 +59,10 @@ function createInMemoryRepository(seed = createSeedData()) {
 
     getRiskPolicyByProjectId(projectId) {
       return seed.riskPolicies.find((policy) => policy.projectId === projectId) ?? null;
+    },
+
+    listDeploymentsByProjectId(projectId) {
+      return seed.deployments.filter((deployment) => deployment.projectId === projectId);
     },
   };
 }

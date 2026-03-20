@@ -1,5 +1,8 @@
 const { createAuthService } = require("./modules/auth/service.js");
 const { createProjectService } = require("./modules/project/service.js");
+const { createModelService } = require("./modules/model/service.js");
+const { createResourceService } = require("./modules/resource/service.js");
+const { createDeploymentService } = require("./modules/deployment/service.js");
 const { createRoutingService } = require("./modules/routing/service.js");
 const { createBillingService } = require("./modules/billing/service.js");
 const { createSettlementService } = require("./modules/settlement/service.js");
@@ -13,6 +16,9 @@ function createControlPlane() {
   return {
     auth: createAuthService(),
     project: createProjectService(),
+    model: createModelService(),
+    resource: createResourceService(),
+    deployment: createDeploymentService(),
     routing: createRoutingService(),
     billing: createBillingService(),
     settlement: createSettlementService(),
