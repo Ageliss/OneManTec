@@ -57,6 +57,42 @@ test("POST /preview/request evaluates integrated gateway decision", () => {
   assert.equal(response.body.target, "node-b");
 });
 
+test("POST /preview/auth returns validation error when fields are missing", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/preview/auth",
+    body: {},
+  });
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(response.body.error, "validation_error");
+  assert.deepEqual(response.body.details.missingFields, ["apiKeyPolicy", "model", "ipAddress"]);
+});
+
+test("POST /preview/demo-request loads seeded control-plane data", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/preview/demo-request",
+    body: {
+      tenantId: "tenant-demo",
+      projectId: "project-demo",
+      apiKeyId: "key-demo",
+      model: "deepseek-chat",
+      ipAddress: "127.0.0.1",
+      inputTokens: 100,
+      outputTokens: 50,
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.routingDecision.target, "node-a");
+});
+
 test("unknown route returns 404 payload", () => {
   const app = createHttpApp();
 

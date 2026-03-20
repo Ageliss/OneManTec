@@ -14,6 +14,12 @@
   定义第一版 HTTP 路由，先提供预览型控制面接口。
 - `http-server.js`
   用 Node 原生 `http` 把 `http-app` 挂出来，避免太早引入框架。
+- `repositories/in-memory-repository.js`
+  提供一层可替换的数据读取接口，后续可以平滑替换成 Prisma。
+- `use-cases/demo-request-preview.js`
+  演示真实控制面如何从 repository 取数据，再经过 auth / routing / billing 链路。
+- `validation.js`
+  统一处理 HTTP 入口的基础字段校验。
 - `server-manifest.test.js`
   用单元测试保证当前模块地图不会被无意改坏。
 - `http-app.test.js`
@@ -35,6 +41,7 @@
 - `POST /preview/route`
 - `POST /preview/billing`
 - `POST /preview/request`
+- `POST /preview/demo-request`
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 
