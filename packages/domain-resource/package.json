@@ -1,0 +1,14 @@
+{
+  "name": "@onemantec/domain-resource",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "echo \"TODO: build domain-resource\"",
+    "lint": "echo \"TODO: lint domain-resource\"",
+    "test": "echo \"TODO: test domain-resource\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format domain-resource\""
+  }
+}

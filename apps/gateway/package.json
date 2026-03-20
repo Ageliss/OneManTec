@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize gateway\"",
+    "build": "echo \"TODO: build gateway\"",
+    "lint": "echo \"TODO: lint gateway\"",
+    "test": "echo \"TODO: test gateway\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format gateway\""
+  }
+}

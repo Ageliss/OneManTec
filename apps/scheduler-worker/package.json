@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/scheduler-worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize scheduler-worker\"",
+    "build": "echo \"TODO: build scheduler-worker\"",
+    "lint": "echo \"TODO: lint scheduler-worker\"",
+    "test": "echo \"TODO: test scheduler-worker\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format scheduler-worker\""
+  }
+}

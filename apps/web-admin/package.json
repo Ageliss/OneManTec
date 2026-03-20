@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/web-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize Next.js app for web-admin\"",
+    "build": "echo \"TODO: build web-admin\"",
+    "lint": "echo \"TODO: lint web-admin\"",
+    "test": "echo \"TODO: test web-admin\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format web-admin\""
+  }
+}

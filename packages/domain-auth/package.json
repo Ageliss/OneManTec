@@ -1,0 +1,14 @@
+{
+  "name": "@onemantec/domain-auth",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "echo \"TODO: build domain-auth\"",
+    "lint": "echo \"TODO: lint domain-auth\"",
+    "test": "echo \"TODO: test domain-auth\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format domain-auth\""
+  }
+}

@@ -1,0 +1,30 @@
+# 依赖目录
+node_modules/
+
+# 构建产物
+dist/
+.next/
+coverage/
+.turbo/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 日志
+*.log
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 系统文件
+.DS_Store
+
+# Prisma 生成物
+generated/
+
+# 临时文件
+tmp/
+temp/

@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/web-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize Next.js app for web-portal\"",
+    "build": "echo \"TODO: build web-portal\"",
+    "lint": "echo \"TODO: lint web-portal\"",
+    "test": "echo \"TODO: test web-portal\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format web-portal\""
+  }
+}

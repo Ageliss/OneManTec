@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/metering-worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize metering-worker\"",
+    "build": "echo \"TODO: build metering-worker\"",
+    "lint": "echo \"TODO: lint metering-worker\"",
+    "test": "echo \"TODO: test metering-worker\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format metering-worker\""
+  }
+}

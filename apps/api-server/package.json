@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/api-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"TODO: initialize NestJS app for api-server\"",
+    "build": "echo \"TODO: build api-server\"",
+    "lint": "echo \"TODO: lint api-server\"",
+    "test": "echo \"TODO: test api-server\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "echo \"TODO: format api-server\""
+  }
+}
