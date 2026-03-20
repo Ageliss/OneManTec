@@ -44,6 +44,7 @@
 - `GET /health`
 - `GET /manifest`
 - `GET /modules`
+- `GET /v1/models`
 - `POST /preview/auth`
 - `POST /preview/budget`
 - `POST /preview/route`
@@ -53,6 +54,12 @@
 - `POST /preview/demo-settlement`
 - `POST /preview/demo-risk`
 - `POST /v1/chat/completions`
+
+当前 runtime 接口特点：
+
+- 支持从 `Authorization: Bearer ...` 读取 API key
+- 支持通过 `x-request-id` 把请求 ID 透传回响应
+- 成功和失败响应都走统一包裹结构
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 

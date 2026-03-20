@@ -7,6 +7,7 @@ function ensureRepositoryContract(repository) {
     "getTenantById",
     "getProjectById",
     "getApiKeyById",
+    "getApiKeyByToken",
     "getApiKeyPolicyByKeyId",
     "getQuotaPolicyByProjectId",
     "getRoutingRuleByProjectAndAlias",

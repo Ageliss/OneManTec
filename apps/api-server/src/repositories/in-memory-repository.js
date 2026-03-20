@@ -18,6 +18,10 @@ function createInMemoryRepository(seed = createSeedData()) {
       return seed.apiKeys.find((apiKey) => apiKey.id === apiKeyId) ?? null;
     },
 
+    getApiKeyByToken(tokenValue) {
+      return seed.apiKeys.find((apiKey) => apiKey.tokenValue === tokenValue) ?? null;
+    },
+
     getApiKeyPolicyByKeyId(apiKeyId) {
       return seed.apiKeyPolicies.find((policy) => policy.apiKeyId === apiKeyId) ?? null;
     },

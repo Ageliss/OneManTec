@@ -19,6 +19,7 @@ function createSeedData() {
         projectId: "project-demo",
         keyPrefix: "omtk_demo",
         keyHash: "hashed-demo",
+        tokenValue: "omtk_demo_key",
         status: "active",
       },
     ],

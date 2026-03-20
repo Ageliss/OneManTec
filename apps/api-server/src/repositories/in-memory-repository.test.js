@@ -10,4 +10,5 @@ test("in-memory repository returns seeded project and policy data", () => {
   assert.equal(repository.getApiKeyPolicyByKeyId("key-demo").maxRequestsPerMinute, 120);
   assert.equal(repository.getDefaultPricingRule().currency, "USD");
   assert.equal(repository.getRiskPolicyByProjectId("project-demo").maxRequestsPerMinute, 300);
+  assert.equal(repository.getApiKeyByToken("omtk_demo_key").id, "key-demo");
 });

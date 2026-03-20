@@ -9,10 +9,14 @@ test("GET /health returns service heartbeat", () => {
   const response = app.handleRoute({
     method: "GET",
     pathname: "/health",
+    headers: {
+      "x-request-id": "req-1",
+    },
   });
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ok, true);
+  assert.equal(response.body.requestId, "req-1");
   assert.equal(response.body.data.service, "api-server");
 });
 
@@ -51,10 +55,14 @@ test("POST /preview/request evaluates integrated gateway decision", () => {
         "node-b": "healthy",
       },
     },
+    headers: {
+      "x-request-id": "req-2",
+    },
   });
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ok, true);
+  assert.equal(response.body.requestId, "req-2");
   assert.equal(response.body.data.allowed, true);
   assert.equal(response.body.data.target, "node-b");
 });
@@ -95,6 +103,24 @@ test("POST /preview/demo-request loads seeded control-plane data", () => {
   assert.equal(response.body.ok, true);
   assert.equal(response.body.data.ok, true);
   assert.equal(response.body.data.routingDecision.target, "node-a");
+});
+
+test("GET /v1/models resolves allowed models from bearer token", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "GET",
+    pathname: "/v1/models",
+    headers: {
+      authorization: "Bearer omtk_demo_key",
+      "x-request-id": "req-models",
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.requestId, "req-models");
+  assert.equal(response.body.data.data[0].id, "deepseek-chat");
 });
 
 test("POST /preview/demo-settlement creates settlement preview records", () => {
@@ -144,17 +170,19 @@ test("POST /v1/chat/completions returns mock completion payload", () => {
     method: "POST",
     pathname: "/v1/chat/completions",
     body: {
-      tenantId: "tenant-demo",
-      projectId: "project-demo",
-      apiKeyId: "key-demo",
       model: "deepseek-chat",
       ipAddress: "127.0.0.1",
       messages: [{ role: "user", content: "hello there" }],
+    },
+    headers: {
+      authorization: "Bearer omtk_demo_key",
+      "x-request-id": "req-chat-1",
     },
   });
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ok, true);
+  assert.equal(response.body.requestId, "req-chat-1");
   assert.equal(response.body.data.completion.object, "chat.completion");
   assert.equal(response.body.data.preview.routingDecision.target, "node-a");
 });

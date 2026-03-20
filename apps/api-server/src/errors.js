@@ -1,4 +1,4 @@
-function createErrorResponse(statusCode, error, message, details = undefined) {
+function createErrorResponse(statusCode, error, message, details = undefined, requestId = null) {
   return {
     statusCode,
     headers: {
@@ -6,6 +6,7 @@ function createErrorResponse(statusCode, error, message, details = undefined) {
     },
     body: {
       ok: false,
+      requestId,
       error,
       message,
       details,
@@ -13,7 +14,7 @@ function createErrorResponse(statusCode, error, message, details = undefined) {
   };
 }
 
-function createSuccessResponse(statusCode, data) {
+function createSuccessResponse(statusCode, data, requestId = null) {
   return {
     statusCode,
     headers: {
@@ -21,6 +22,7 @@ function createSuccessResponse(statusCode, data) {
     },
     body: {
       ok: true,
+      requestId,
       data,
     },
   };

@@ -11,6 +11,7 @@ function createHttpServer() {
     const response = app.handleRoute({
       method: req.method,
       pathname: url.pathname,
+      headers: req.headers,
       body,
     });
 
