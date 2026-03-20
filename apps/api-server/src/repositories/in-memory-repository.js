@@ -44,6 +44,10 @@ function createInMemoryRepository(seed = createSeedData()) {
     getRouteHealth() {
       return seed.routeHealth;
     },
+
+    getRiskPolicyByProjectId(projectId) {
+      return seed.riskPolicies.find((policy) => policy.projectId === projectId) ?? null;
+    },
   };
 }
 

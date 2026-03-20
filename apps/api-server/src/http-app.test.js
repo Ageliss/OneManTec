@@ -93,6 +93,44 @@ test("POST /preview/demo-request loads seeded control-plane data", () => {
   assert.equal(response.body.routingDecision.target, "node-a");
 });
 
+test("POST /preview/demo-settlement creates settlement preview records", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/preview/demo-settlement",
+    body: {
+      tenantId: "tenant-demo",
+      amount: 100,
+      refundAmount: 15,
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.rechargeOrder.amount, 100);
+  assert.equal(response.body.refundRequest.amount, 15);
+});
+
+test("POST /preview/demo-risk emits risk event for abnormal traffic", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/preview/demo-risk",
+    body: {
+      projectId: "project-demo",
+      tenantId: "tenant-demo",
+      apiKeyId: "key-demo",
+      requestsInCurrentMinute: 999,
+      estimatedCharge: 1,
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.detection.risky, true);
+  assert.equal(response.body.riskEvent.riskType, "request_burst");
+});
+
 test("unknown route returns 404 payload", () => {
   const app = createHttpApp();
 

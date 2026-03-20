@@ -68,6 +68,14 @@ function createSeedData() {
         currency: "USD",
       },
     ],
+    riskPolicies: [
+      {
+        id: "risk-demo",
+        projectId: "project-demo",
+        maxRequestsPerMinute: 300,
+        maxSingleRequestCharge: 50,
+      },
+    ],
   };
 }
 

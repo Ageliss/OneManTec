@@ -1,14 +1,16 @@
 const { buildServerManifest } = require("./server-manifest.js");
 const { buildModuleLayout } = require("./module-layout.js");
 const { createControlPlane } = require("./control-plane.js");
-const { createInMemoryRepository } = require("./repositories/in-memory-repository.js");
+const { createRepository } = require("./repositories/index.js");
 const { previewDemoRequest } = require("./use-cases/demo-request-preview.js");
+const { previewDemoSettlement } = require("./use-cases/demo-settlement-preview.js");
+const { previewDemoRisk } = require("./use-cases/demo-risk-preview.js");
 const { requireFields } = require("./validation.js");
 const { createErrorResponse } = require("./errors.js");
 
 function createHttpApp() {
   const controlPlane = createControlPlane();
-  const repository = createInMemoryRepository();
+  const repository = createRepository();
 
   function handleRoute({ method, pathname, body = {} }) {
     if (method === "GET" && pathname === "/health") {
@@ -161,6 +163,56 @@ function createHttpApp() {
 
       if (!result.ok) {
         return createErrorResponse(404, result.error, "Demo data was not found");
+      }
+
+      return jsonResponse(200, result);
+    }
+
+    if (method === "POST" && pathname === "/preview/demo-settlement") {
+      const validationError = requireFields(body, ["tenantId", "amount"]);
+      if (validationError) {
+        return validationError;
+      }
+
+      const result = previewDemoSettlement({
+        repository,
+        controlPlane,
+        tenantId: body.tenantId,
+        amount: body.amount,
+        refundAmount: body.refundAmount ?? 0,
+      });
+
+      if (!result.ok) {
+        return createErrorResponse(404, result.error, "Demo settlement data was not found");
+      }
+
+      return jsonResponse(200, result);
+    }
+
+    if (method === "POST" && pathname === "/preview/demo-risk") {
+      const validationError = requireFields(body, [
+        "projectId",
+        "tenantId",
+        "apiKeyId",
+        "requestsInCurrentMinute",
+        "estimatedCharge",
+      ]);
+      if (validationError) {
+        return validationError;
+      }
+
+      const result = previewDemoRisk({
+        repository,
+        controlPlane,
+        projectId: body.projectId,
+        tenantId: body.tenantId,
+        apiKeyId: body.apiKeyId,
+        requestsInCurrentMinute: body.requestsInCurrentMinute,
+        estimatedCharge: body.estimatedCharge,
+      });
+
+      if (!result.ok) {
+        return createErrorResponse(404, result.error, "Demo risk data was not found");
       }
 
       return jsonResponse(200, result);

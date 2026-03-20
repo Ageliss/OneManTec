@@ -16,8 +16,14 @@
   用 Node 原生 `http` 把 `http-app` 挂出来，避免太早引入框架。
 - `repositories/in-memory-repository.js`
   提供一层可替换的数据读取接口，后续可以平滑替换成 Prisma。
+- `repositories/contracts.js`
+  明确 repository 需要满足的方法边界，后续换数据源时有基线。
 - `use-cases/demo-request-preview.js`
   演示真实控制面如何从 repository 取数据，再经过 auth / routing / billing 链路。
+- `use-cases/demo-settlement-preview.js`
+  演示结算相关流程的预览输出。
+- `use-cases/demo-risk-preview.js`
+  演示风控检测和 risk event 生成。
 - `validation.js`
   统一处理 HTTP 入口的基础字段校验。
 - `server-manifest.test.js`
@@ -42,6 +48,8 @@
 - `POST /preview/billing`
 - `POST /preview/request`
 - `POST /preview/demo-request`
+- `POST /preview/demo-settlement`
+- `POST /preview/demo-risk`
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 
