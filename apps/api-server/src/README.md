@@ -10,14 +10,31 @@
   把 manifest 转成真实目录映射，保证模块文档和模块职责一致。
 - `control-plane.js`
   把当前已落地的模块 service 聚合成一个简单入口，方便后续接路由层。
+- `http-app.js`
+  定义第一版 HTTP 路由，先提供预览型控制面接口。
+- `http-server.js`
+  用 Node 原生 `http` 把 `http-app` 挂出来，避免太早引入框架。
 - `server-manifest.test.js`
   用单元测试保证当前模块地图不会被无意改坏。
+- `http-app.test.js`
+  验证健康检查、请求预览、404 等接口行为。
 - `modules/*/service.js`
   放每个模块当前可执行的核心服务逻辑。
 - `modules/*/service.test.js`
   为每个模块 service 提供单元测试。
 - `modules/*/README.md`
   把每个后端模块的职责单独写清楚。
+
+当前可用接口：
+
+- `GET /health`
+- `GET /manifest`
+- `GET /modules`
+- `POST /preview/auth`
+- `POST /preview/budget`
+- `POST /preview/route`
+- `POST /preview/billing`
+- `POST /preview/request`
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 
