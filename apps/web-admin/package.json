@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "echo \"TODO: initialize Next.js app for web-admin\"",
-    "build": "echo \"TODO: build web-admin\"",
+    "dev": "node server.js",
+    "build": "echo \"No build step yet for web-admin static shell\"",
     "lint": "echo \"TODO: lint web-admin\"",
-    "test": "echo \"TODO: test web-admin\"",
-    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test src/*.test.js",
+    "typecheck": "echo \"TypeScript migration pending for web-admin\"",
     "format": "echo \"TODO: format web-admin\""
   }
 }
