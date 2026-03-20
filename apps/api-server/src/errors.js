@@ -5,6 +5,7 @@ function createErrorResponse(statusCode, error, message, details = undefined) {
       "content-type": "application/json; charset=utf-8",
     },
     body: {
+      ok: false,
       error,
       message,
       details,
@@ -12,6 +13,20 @@ function createErrorResponse(statusCode, error, message, details = undefined) {
   };
 }
 
+function createSuccessResponse(statusCode, data) {
+  return {
+    statusCode,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+    },
+    body: {
+      ok: true,
+      data,
+    },
+  };
+}
+
 module.exports = {
   createErrorResponse,
+  createSuccessResponse,
 };

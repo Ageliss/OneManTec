@@ -5,8 +5,9 @@ const { createRepository } = require("./repositories/index.js");
 const { previewDemoRequest } = require("./use-cases/demo-request-preview.js");
 const { previewDemoSettlement } = require("./use-cases/demo-settlement-preview.js");
 const { previewDemoRisk } = require("./use-cases/demo-risk-preview.js");
+const { createMockChatCompletion } = require("./use-cases/mock-chat-completion.js");
 const { requireFields } = require("./validation.js");
-const { createErrorResponse } = require("./errors.js");
+const { createErrorResponse, createSuccessResponse } = require("./errors.js");
 
 function createHttpApp() {
   const controlPlane = createControlPlane();
@@ -14,21 +15,20 @@ function createHttpApp() {
 
   function handleRoute({ method, pathname, body = {} }) {
     if (method === "GET" && pathname === "/health") {
-      return jsonResponse(200, {
-        ok: true,
+      return createSuccessResponse(200, {
         service: "api-server",
       });
     }
 
     if (method === "GET" && pathname === "/manifest") {
-      return jsonResponse(200, {
+      return createSuccessResponse(200, {
         ...buildServerManifest(),
         moduleLayout: buildModuleLayout(),
       });
     }
 
     if (method === "GET" && pathname === "/modules") {
-      return jsonResponse(200, {
+      return createSuccessResponse(200, {
         modules: buildModuleLayout(),
       });
     }
@@ -39,7 +39,7 @@ function createHttpApp() {
         return validationError;
       }
 
-      return jsonResponse(
+      return createSuccessResponse(
         200,
         controlPlane.auth.authorizeRuntimeRequest({
           apiKeyPolicy: body.apiKeyPolicy,
@@ -56,7 +56,7 @@ function createHttpApp() {
         return validationError;
       }
 
-      return jsonResponse(
+      return createSuccessResponse(
         200,
         controlPlane.project.previewCharge({
           budget: body.budget,
@@ -71,7 +71,7 @@ function createHttpApp() {
         return validationError;
       }
 
-      return jsonResponse(
+      return createSuccessResponse(
         200,
         controlPlane.routing.previewRoute({
           routingPolicy: body.routingPolicy,
@@ -104,7 +104,7 @@ function createHttpApp() {
         balanceBefore: body.balanceBefore ?? 0,
       });
 
-      return jsonResponse(200, {
+      return createSuccessResponse(200, {
         charge,
         ledgerEntry,
       });
@@ -122,7 +122,7 @@ function createHttpApp() {
         return validationError;
       }
 
-      return jsonResponse(
+      return createSuccessResponse(
         200,
         controlPlane.routing.evaluateRequest({
           apiKeyPolicy: body.apiKeyPolicy,
@@ -165,7 +165,7 @@ function createHttpApp() {
         return createErrorResponse(404, result.error, "Demo data was not found");
       }
 
-      return jsonResponse(200, result);
+      return createSuccessResponse(200, result);
     }
 
     if (method === "POST" && pathname === "/preview/demo-settlement") {
@@ -186,7 +186,7 @@ function createHttpApp() {
         return createErrorResponse(404, result.error, "Demo settlement data was not found");
       }
 
-      return jsonResponse(200, result);
+      return createSuccessResponse(200, result);
     }
 
     if (method === "POST" && pathname === "/preview/demo-risk") {
@@ -215,7 +215,41 @@ function createHttpApp() {
         return createErrorResponse(404, result.error, "Demo risk data was not found");
       }
 
-      return jsonResponse(200, result);
+      return createSuccessResponse(200, result);
+    }
+
+    if (method === "POST" && pathname === "/v1/chat/completions") {
+      const validationError = requireFields(body, [
+        "tenantId",
+        "projectId",
+        "apiKeyId",
+        "model",
+        "ipAddress",
+        "messages",
+      ]);
+      if (validationError) {
+        return validationError;
+      }
+
+      const result = createMockChatCompletion({
+        repository,
+        controlPlane,
+        tenantId: body.tenantId,
+        projectId: body.projectId,
+        apiKeyId: body.apiKeyId,
+        model: body.model,
+        ipAddress: body.ipAddress,
+        messages: body.messages,
+        requestsInCurrentMinute: body.requestsInCurrentMinute ?? 0,
+      });
+
+      if (!result.ok) {
+        return createErrorResponse(403, result.reason ?? "runtime_denied", "Mock runtime request denied", {
+          stage: result.stage,
+        });
+      }
+
+      return createSuccessResponse(200, result);
     }
 
     return createErrorResponse(404, "not_found", `No route for ${method} ${pathname}`);
@@ -223,16 +257,6 @@ function createHttpApp() {
 
   return {
     handleRoute,
-  };
-}
-
-function jsonResponse(statusCode, body) {
-  return {
-    statusCode,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-    },
-    body,
   };
 }
 

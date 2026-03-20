@@ -13,6 +13,7 @@ test("GET /health returns service heartbeat", () => {
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.service, "api-server");
 });
 
 test("POST /preview/request evaluates integrated gateway decision", () => {
@@ -53,8 +54,9 @@ test("POST /preview/request evaluates integrated gateway decision", () => {
   });
 
   assert.equal(response.statusCode, 200);
-  assert.equal(response.body.allowed, true);
-  assert.equal(response.body.target, "node-b");
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.allowed, true);
+  assert.equal(response.body.data.target, "node-b");
 });
 
 test("POST /preview/auth returns validation error when fields are missing", () => {
@@ -67,6 +69,7 @@ test("POST /preview/auth returns validation error when fields are missing", () =
   });
 
   assert.equal(response.statusCode, 400);
+  assert.equal(response.body.ok, false);
   assert.equal(response.body.error, "validation_error");
   assert.deepEqual(response.body.details.missingFields, ["apiKeyPolicy", "model", "ipAddress"]);
 });
@@ -90,7 +93,8 @@ test("POST /preview/demo-request loads seeded control-plane data", () => {
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ok, true);
-  assert.equal(response.body.routingDecision.target, "node-a");
+  assert.equal(response.body.data.ok, true);
+  assert.equal(response.body.data.routingDecision.target, "node-a");
 });
 
 test("POST /preview/demo-settlement creates settlement preview records", () => {
@@ -107,8 +111,9 @@ test("POST /preview/demo-settlement creates settlement preview records", () => {
   });
 
   assert.equal(response.statusCode, 200);
-  assert.equal(response.body.rechargeOrder.amount, 100);
-  assert.equal(response.body.refundRequest.amount, 15);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.rechargeOrder.amount, 100);
+  assert.equal(response.body.data.refundRequest.amount, 15);
 });
 
 test("POST /preview/demo-risk emits risk event for abnormal traffic", () => {
@@ -127,8 +132,31 @@ test("POST /preview/demo-risk emits risk event for abnormal traffic", () => {
   });
 
   assert.equal(response.statusCode, 200);
-  assert.equal(response.body.detection.risky, true);
-  assert.equal(response.body.riskEvent.riskType, "request_burst");
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.detection.risky, true);
+  assert.equal(response.body.data.riskEvent.riskType, "request_burst");
+});
+
+test("POST /v1/chat/completions returns mock completion payload", () => {
+  const app = createHttpApp();
+
+  const response = app.handleRoute({
+    method: "POST",
+    pathname: "/v1/chat/completions",
+    body: {
+      tenantId: "tenant-demo",
+      projectId: "project-demo",
+      apiKeyId: "key-demo",
+      model: "deepseek-chat",
+      ipAddress: "127.0.0.1",
+      messages: [{ role: "user", content: "hello there" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.data.completion.object, "chat.completion");
+  assert.equal(response.body.data.preview.routingDecision.target, "node-a");
 });
 
 test("unknown route returns 404 payload", () => {
@@ -140,5 +168,6 @@ test("unknown route returns 404 payload", () => {
   });
 
   assert.equal(response.statusCode, 404);
+  assert.equal(response.body.ok, false);
   assert.equal(response.body.error, "not_found");
 });

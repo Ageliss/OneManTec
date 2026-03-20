@@ -24,6 +24,8 @@
   演示结算相关流程的预览输出。
 - `use-cases/demo-risk-preview.js`
   演示风控检测和 risk event 生成。
+- `use-cases/mock-chat-completion.js`
+  提供最小可用的 mock runtime 生成逻辑，并复用现有控制链。
 - `validation.js`
   统一处理 HTTP 入口的基础字段校验。
 - `server-manifest.test.js`
@@ -50,6 +52,7 @@
 - `POST /preview/demo-request`
 - `POST /preview/demo-settlement`
 - `POST /preview/demo-risk`
+- `POST /v1/chat/completions`
 
 后续真正接入 Web 框架时，建议按下面结构展开：
 
