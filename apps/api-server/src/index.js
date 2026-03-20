@@ -1,5 +1,6 @@
 const { buildServerManifest } = require("./server-manifest.js");
 const { buildModuleLayout } = require("./module-layout.js");
+const { createControlPlane } = require("./control-plane.js");
 
 if (require.main === module) {
   const manifest = buildServerManifest();
@@ -8,6 +9,7 @@ if (require.main === module) {
       {
         ...manifest,
         moduleLayout: buildModuleLayout(),
+        executableModules: Object.keys(createControlPlane()),
       },
       null,
       2,
@@ -18,4 +20,5 @@ if (require.main === module) {
 module.exports = {
   buildServerManifest,
   buildModuleLayout,
+  createControlPlane,
 };

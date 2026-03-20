@@ -13,3 +13,10 @@
 - `services`
 - `repositories`
 - `dto`
+
+当前已落地：
+
+- `service.js`
+  封装 API key policy 的创建和请求授权判断
+- `service.test.js`
+  验证最基本的授权路径

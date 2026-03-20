@@ -10,7 +10,7 @@
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
-    "test": "node --test apps/api-server/src/*.test.js packages/domain-auth/src/*.test.js packages/domain-billing/src/*.test.js packages/domain-customer/src/*.test.js packages/domain-gateway/src/*.test.js",
+    "test": "node --test apps/api-server/src/*.test.js apps/api-server/src/modules/*/*.test.js packages/domain-auth/src/*.test.js packages/domain-billing/src/*.test.js packages/domain-customer/src/*.test.js packages/domain-gateway/src/*.test.js",
     "typecheck": "pnpm -r typecheck",
     "format": "pnpm -r format"
   }

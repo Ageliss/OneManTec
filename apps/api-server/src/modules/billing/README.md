@@ -7,3 +7,10 @@
 - ledger
 - billing adjustment
 - reconciliation hooks
+
+当前已落地：
+
+- `service.js`
+  封装价格规则、usage 定价、账本记录映射
+- `service.test.js`
+  验证费用计算和余额扣减
