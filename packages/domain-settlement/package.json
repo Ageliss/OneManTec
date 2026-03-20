@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/domain-settlement",
+  "version": "0.1.0",
+  "private": true,
+  "main": "README.md",
+  "scripts": {
+    "build": "echo \"No build step yet for domain-settlement\"",
+    "lint": "echo \"TODO: lint domain-settlement\"",
+    "test": "echo \"No tests yet for domain-settlement\"",
+    "typecheck": "echo \"TypeScript migration pending for domain-settlement\"",
+    "format": "echo \"TODO: format domain-settlement\""
+  }
+}

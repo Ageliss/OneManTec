@@ -2,13 +2,12 @@
   "name": "@onemantec/domain-auth",
   "version": "0.1.0",
   "private": true,
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "src/index.js",
   "scripts": {
-    "build": "echo \"TODO: build domain-auth\"",
+    "build": "echo \"No build step yet for domain-auth\"",
     "lint": "echo \"TODO: lint domain-auth\"",
-    "test": "echo \"TODO: test domain-auth\"",
-    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test src/*.test.js",
+    "typecheck": "echo \"TypeScript migration pending for domain-auth\"",
     "format": "echo \"TODO: format domain-auth\""
   }
 }

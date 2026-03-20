@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/domain-product",
+  "version": "0.1.0",
+  "private": true,
+  "main": "README.md",
+  "scripts": {
+    "build": "echo \"No build step yet for domain-product\"",
+    "lint": "echo \"TODO: lint domain-product\"",
+    "test": "echo \"No tests yet for domain-product\"",
+    "typecheck": "echo \"TypeScript migration pending for domain-product\"",
+    "format": "echo \"TODO: format domain-product\""
+  }
+}

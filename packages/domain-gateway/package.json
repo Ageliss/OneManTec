@@ -2,13 +2,12 @@
   "name": "@onemantec/domain-gateway",
   "version": "0.1.0",
   "private": true,
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "src/index.js",
   "scripts": {
-    "build": "echo \"TODO: build domain-gateway\"",
+    "build": "echo \"No build step yet for domain-gateway\"",
     "lint": "echo \"TODO: lint domain-gateway\"",
-    "test": "echo \"TODO: test domain-gateway\"",
-    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test src/*.test.js",
+    "typecheck": "echo \"TypeScript migration pending for domain-gateway\"",
     "format": "echo \"TODO: format domain-gateway\""
   }
 }

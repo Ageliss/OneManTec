@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/domain-risk",
+  "version": "0.1.0",
+  "private": true,
+  "main": "README.md",
+  "scripts": {
+    "build": "echo \"No build step yet for domain-risk\"",
+    "lint": "echo \"TODO: lint domain-risk\"",
+    "test": "echo \"No tests yet for domain-risk\"",
+    "typecheck": "echo \"TypeScript migration pending for domain-risk\"",
+    "format": "echo \"TODO: format domain-risk\""
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@onemantec/domain-provider",
+  "version": "0.1.0",
+  "private": true,
+  "main": "README.md",
+  "scripts": {
+    "build": "echo \"No build step yet for domain-provider\"",
+    "lint": "echo \"TODO: lint domain-provider\"",
+    "test": "echo \"No tests yet for domain-provider\"",
+    "typecheck": "echo \"TypeScript migration pending for domain-provider\"",
+    "format": "echo \"TODO: format domain-provider\""
+  }
+}

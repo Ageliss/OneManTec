@@ -28,6 +28,10 @@ packages/
   domain-resource/    # 机器资源与调度域
   domain-billing/     # 计量、计费、账本域
   domain-gateway/     # 网关与流量治理域
+  domain-product/     # 产品、套餐、价格版本域
+  domain-settlement/  # 充值、开票、退款、结算域
+  domain-provider/    # 上游 provider、凭证、BYOK 域
+  domain-risk/        # 风控、异常流量、滥用防护域
 
 database/
   schema/             # 数据库 schema 草案
